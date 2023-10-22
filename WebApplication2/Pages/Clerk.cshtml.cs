@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -12,22 +10,19 @@ namespace WebApplication2.Pages
     public class Clerk : PageModel
     {
         private readonly ApplicationDbContext _context;
-        private readonly JobQueue<BackendService> _queue;
-        private readonly ILogger<BackendService> _logger;
+        private readonly JobQueue<KitchenJob> _queue;
 
-        public Clerk(ApplicationDbContext context, JobQueue<BackendService> queue, ILogger<BackendService> logger)
+        public Clerk(ApplicationDbContext context, JobQueue<KitchenJob> queue)
         {
             _context = context;
             _queue = queue;
-            _logger = logger;
         }
         
         // Modèle pour un nouveau client
-        [BindProperty]
-        public Customer NewCustomer { get; set; }
+        [BindProperty] public Customer NewCustomer { get; set; } = new();
 
         // Liste de clients depuis la base de données (simulée ici)
-        public IList<Customer> Customers { get; set; }
+        public IList<Customer> Customers { get; set; } = new List<Customer>();
 
         // Statistiques
         public int TotalOrders { get; set; }
@@ -39,18 +34,12 @@ namespace WebApplication2.Pages
             Customers = await _context.Customers.ToListAsync();
             TotalOrders = 10; // Exemple simulé
             TotalRevenue = 500.50m; // Exemple simulé
-            _queue.Enqueue(new BackendService(_logger, _queue));
         }
 
         public IActionResult OnPost()
         {
-            // Ajouter un nouveau client à la liste (simulé)
-
-
-            // Réinitialiser le formulaire
-            NewCustomer = new Customer();
-
-            return Page();
+            _queue.Enqueue(new KitchenJob());
+            return RedirectToPage();
         }
     }
 

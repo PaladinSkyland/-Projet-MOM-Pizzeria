@@ -8,8 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-builder.Services.AddSingleton<JobQueue<BackendService>>();
-builder.Services.AddHostedService<BackendService>();
+builder.Services.AddSingleton<JobQueue<KitchenJob>>();
+builder.Services.AddHostedService<KitchenService>();
 
 //add services to the container
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

@@ -1,0 +1,31 @@
+@page
+@model WebApplication2.Pages.Kitchen
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Kitchen page";
+}
+
+<div>
+    <h2>Kitchen page</h2>
+    <div>
+        <h3>List of notifications</h3>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>time</th>
+                <th>text</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var notification in Model.Notifications)
+            {
+                <tr>
+                    <td>@notification.Time</td>
+                    <td>@notification.Text</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
