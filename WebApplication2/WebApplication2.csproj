@@ -19,5 +19,9 @@
       <_ContentIncludedByDefault Remove="Pages\CustomerNotifPage\Index.cshtml" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Include="wwwroot\favicon.ico" />
+    </ItemGroup>
+
 
 </Project>
