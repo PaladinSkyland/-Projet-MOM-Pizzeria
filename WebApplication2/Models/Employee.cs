@@ -1,6 +1,6 @@
 namespace WebApplication2.Models;
 
-public class Employee : People
+public abstract class Employee : People
 {
     public string JobTitle { get; set; }
     public string Gender { get; set; }

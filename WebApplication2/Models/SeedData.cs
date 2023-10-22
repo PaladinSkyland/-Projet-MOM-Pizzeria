@@ -12,7 +12,7 @@ namespace WebApplication2.Models
         {
             using (var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
             {
-                if (true)// Change this cause crash
+                if (context.Drinks.Any())
                 {
                     context.Drinks.AddRange(
                         new Drink
