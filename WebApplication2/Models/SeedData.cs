@@ -12,6 +12,35 @@ namespace WebApplication2.Models
         {
             using (var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
             {
+                if (true)// Change this cause crash
+                {
+                    context.Drinks.AddRange(
+                        new Drink
+                        {
+                            Name = "Coca",
+                            Price = 2.5,
+                            Volume = "33cl"
+                        },
+                        new Drink
+                        {
+                            Name = "Fanta",
+                            Price = 2.5,
+                            Volume = "33cl"
+                        },
+                        new Drink
+                        {
+                            Name = "Sprite",
+                            Price = 2.5,
+                            Volume = "33cl"
+                        },
+                        new Drink
+                        {
+                            Name = "Ice Tea",
+                            Price = 2.5,
+                            Volume = "33cl"
+                        }
+                    );
+                }
                 // Look for any movies.
                 if (context.Customers.Any())
                 {
