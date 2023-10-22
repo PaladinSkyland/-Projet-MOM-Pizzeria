@@ -1,0 +1,65 @@
+@page
+@model WebApplication2.Pages.Clerk
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Page du Clerc";
+}
+
+<div>
+    <h2>Gestion des Clients</h2>
+    <div>
+        <form method="post">
+            <div class="form-group">
+                <label for="customerName">Nom du Client</label>
+                <input type="text" class="form-control" id="customerName" asp-for="NewCustomer.Name">
+            </div>
+            <div class="form-group">
+                <label for="customerAddress">Adresse</label>
+                <input type="text" class="form-control" id="customerAddress" asp-for="NewCustomer.Address">
+            </div>
+            <div class="form-group">
+                <label for="customerPhone">Numéro de Téléphone</label>
+                <input type="text" class="form-control" id="customerPhone" asp-for="NewCustomer.PhoneNumber">
+            </div>
+            <button type="submit" class="btn btn-primary">Ajouter Client</button>
+        </form>
+    </div>
+
+    <div>
+        <h3>Liste des Clients</h3>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Adresse</th>
+                <th>Numéro de Téléphone</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var customer in Model.Customers)
+            {
+                <tr>
+                    <td>@customer.Name</td>
+                    <td>@customer.Address</td>
+                    <td>@customer.PhoneNumber</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div>
+    <h2>Gestion des Commandes</h2>
+    <!-- Formulaires pour gérer les commandes -->
+</div>
+
+<div>
+    <h2>Statistiques</h2>
+    <div>
+        <p>Total des commandes : @Model.TotalOrders</p>
+        <p>Chiffre d'affaires : @Model.TotalRevenue</p>
+        <!-- Autres statistiques -->
+    </div>
+</div>

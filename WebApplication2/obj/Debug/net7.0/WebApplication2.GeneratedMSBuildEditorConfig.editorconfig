@@ -16,6 +16,10 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = C:\Users\HUGO\RiderProjects\WebApplication2\WebApplication2
 build_property._RazorSourceGeneratorDebug = 
 
+[C:/Users/HUGO/RiderProjects/WebApplication2/WebApplication2/Pages/Clerk.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2xlcmsuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/HUGO/RiderProjects/WebApplication2/WebApplication2/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
