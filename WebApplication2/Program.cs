@@ -15,6 +15,12 @@ builder.Services.AddHostedService<BackendService>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite($"Data Source=DB/database.db"));
 
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Définissez la durée de la session selon vos besoins.
+});
+
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -37,6 +43,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseSession();
 
 app.MapRazorPages();
 
