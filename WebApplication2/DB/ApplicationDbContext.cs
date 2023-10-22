@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using WebApplication2.Models;
 
-namespace VotreProjet.Data
+namespace WebApplication2.DB
 {
     public class ApplicationDbContext : DbContext
     {

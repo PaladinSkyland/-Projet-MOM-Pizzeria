@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using VotreProjet.Data;
+using WebApplication2.DB;
+using WebApplication2.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,9 +9,15 @@ builder.Services.AddRazorPages();
 
 //add services to the container
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite($"Data Source=DB/database.db"));
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    SeedData.Initialize(services);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

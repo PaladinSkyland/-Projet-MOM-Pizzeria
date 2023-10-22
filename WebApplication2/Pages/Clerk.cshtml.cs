@@ -2,31 +2,36 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using WebApplication2.DB;
+using WebApplication2.Models;
 
 namespace WebApplication2.Pages
 {
     public class Clerk : PageModel
     {
+        private readonly ApplicationDbContext _context;
+
+        public Clerk(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+        
         // Modèle pour un nouveau client
         [BindProperty]
         public Customer NewCustomer { get; set; }
 
         // Liste de clients depuis la base de données (simulée ici)
-        public List<Customer> Customers { get; set; }
+        public IList<Customer> Customers { get; set; }
 
         // Statistiques
         public int TotalOrders { get; set; }
         public decimal TotalRevenue { get; set; }
 
-        public Clerk()
+        
+        public async Task OnGetAsync()
         {
-            // Initialisation ou récupération des données (exemple simulé)
-            Customers = new List<Customer>
-            {
-                new Customer { Name = "Client1", Address = "Adresse1", PhoneNumber = "1234567890" },
-                new Customer { Name = "Client2", Address = "Adresse2", PhoneNumber = "9876543210" }
-            };
-
+            Customers = await _context.Customers.ToListAsync();
             TotalOrders = 10; // Exemple simulé
             TotalRevenue = 500.50m; // Exemple simulé
         }
@@ -43,11 +48,4 @@ namespace WebApplication2.Pages
         }
     }
 
-    // Modèle pour un client (simulé)
-    public class Customer
-    {
-        public string Name { get; set; }
-        public string Address { get; set; }
-        public string PhoneNumber { get; set; }
-    }
 }
