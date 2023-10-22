@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using WebApplication2.Services;
 using WebApplication2.DB;
 using WebApplication2.Models;
 
@@ -6,6 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+builder.Services.AddSingleton<JobQueue<BackendService>>();
+builder.Services.AddHostedService<BackendService>();
 
 //add services to the container
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
