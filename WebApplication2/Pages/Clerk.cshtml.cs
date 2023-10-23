@@ -27,7 +27,7 @@ namespace WebApplication2.Pages
         // Statistiques
         public int TotalOrders { get; set; }
         public decimal TotalRevenue { get; set; }
-
+    
         
         public async Task OnGetAsync()
         {
@@ -35,12 +35,50 @@ namespace WebApplication2.Pages
             TotalOrders = 10; // Exemple simulé
             TotalRevenue = 500.50m; // Exemple simulé
         }
-
+        /*
         public IActionResult OnPost()
         {
             _queue.Enqueue(new KitchenJob());
             return RedirectToPage();
         }
+        */
+        public async Task<IActionResult> OnPostAsync()
+        {
+            if (ModelState.IsValid)
+            {
+                // Ajouter le nouveau client à la base de données
+                _context.Customers.Add(NewCustomer);
+                await _context.SaveChangesAsync();
+
+                // Effacer les champs après avoir ajouté le client
+                NewCustomer = new Customer();
+
+                // Mettre à jour la liste des clients
+                Customers = await _context.Customers.ToListAsync();
+            }
+
+            return RedirectToPage();
+        }
+        
+        public async Task<IActionResult> OnPostDeleteAsync(int? customerId)
+        {
+            if (customerId != null)
+            {
+                var customer = await _context.Customers.FindAsync(customerId);
+                if (customer != null)
+                {
+                    _context.Customers.Remove(customer);
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            // Mettre à jour la liste des clients
+            Customers = await _context.Customers.ToListAsync();
+
+            return Page();
+        }
+
+
     }
 
 }
