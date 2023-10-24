@@ -1,23 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 using WebApplication2.DB;
 using WebApplication2.Models;
+using WebApplication2.Services;
 
-namespace WebApplication2.Pages
+namespace WebApplication2.Pages.DelivererPages
 {
-    public class CustomerNotifPageModel : PageModel
+    public class DelivererPageModel : PageModel
     {
         private readonly ApplicationDbContext _context;
 
-        public CustomerNotifPageModel(ApplicationDbContext context)
+        public DelivererPageModel(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public Customer Customer { get; set; }
-
+        public Deliverer? Deliverer { get; set; }
+        public IList<string> Notifications { get; set; } = new List<string>();
+        
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
@@ -25,12 +26,14 @@ namespace WebApplication2.Pages
                 return NotFound();
             }
 
-            Customer = await _context.Customers.FirstOrDefaultAsync(m => m.Id == id);
+            Deliverer = await _context.Deliverers.FirstOrDefaultAsync(m => m.Id == id);
 
-            if (Customer == null)
+            if (Deliverer == null)
             {
                 return NotFound();
             }
+
+            Notifications = RabbitClient.GetNotifications("deliverers_exchange", $"deliverer{id}");
 
             return Page();
         }

@@ -19,7 +19,13 @@ namespace WebApplication2.Pages
         }
         
         // Modèle pour un nouveau client
-        [BindProperty] public Customer NewCustomer { get; set; } = new();
+        [BindProperty] public Customer NewCustomer { get; set; } = new()
+        {
+            PhoneNumber = "",
+            Name = "",
+            Email = "",
+            Address = ""
+        };
 
         // Liste de clients depuis la base de données (simulée ici)
         public IList<Customer> Customers { get; set; } = new List<Customer>();
@@ -49,12 +55,19 @@ namespace WebApplication2.Pages
                 // Ajouter le nouveau client à la base de données
                 _context.Customers.Add(NewCustomer);
                 await _context.SaveChangesAsync();
-
+                
                 // Effacer les champs après avoir ajouté le client
-                NewCustomer = new Customer();
+                NewCustomer = new Customer
+                {
+                    PhoneNumber = "",
+                    Name = "",
+                    Email = "",
+                    Address = ""
+                };
 
                 // Mettre à jour la liste des clients
                 Customers = await _context.Customers.ToListAsync();
+                
             }
 
             return RedirectToPage();

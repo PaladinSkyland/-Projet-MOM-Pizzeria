@@ -1,39 +1,37 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading.Tasks;
 using WebApplication2.DB;
 
-namespace WebApplication2.Pages
+namespace WebApplication2.Pages.DelivererPages
 {
-    public class CustomersModelMulti : PageModel
+    public class DelivererLoginPageModel : PageModel
     {
         private readonly ApplicationDbContext _context;
 
-        public CustomersModelMulti(ApplicationDbContext context)
+        public DelivererLoginPageModel(ApplicationDbContext context)
         {
             _context = context;
         }
 
         [BindProperty]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         public async Task<IActionResult> OnPostAsync()
         {
             if (!string.IsNullOrEmpty(Email))
             {
-                var customer = await _context.Customers
-                    .Where(c => c.Email == Email)
+                var deliverer = await _context.Deliverers
+                    .Where(d => d.Email == Email)
                     .FirstOrDefaultAsync();
 
-                if (customer != null)
+                if (deliverer != null)
                 {
                     // Stocker l'ID du client dans la session
-                    HttpContext.Session.SetInt32("CustomerId", customer.Id);
+                    HttpContext.Session.SetInt32("DelivererId", deliverer.Id);
 
                     // Rediriger l'utilisateur vers la page personnalisée
-                    return RedirectToPage("customernotifpage", new { id = customer.Id });
+                    return RedirectToPage("Index", new { id = deliverer.Id });
                 }
             }
 

@@ -9,20 +9,17 @@
 <div>
     <h2>Kitchen page</h2>
     <div>
-        <h3>List of notifications</h3>
         <table class="table">
             <thead>
             <tr>
-                <th>time</th>
-                <th>text</th>
+                <th>Notifications</th>
             </tr>
             </thead>
             <tbody>
             @foreach (var notification in Model.Notifications)
             {
                 <tr>
-                    <td>@notification.Time</td>
-                    <td>@notification.Text</td>
+                    <td>@notification</td>
                 </tr>
             }
             </tbody>
