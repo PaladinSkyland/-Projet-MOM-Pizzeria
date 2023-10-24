@@ -25,4 +25,10 @@
     </ItemGroup>
 
 
+
+    <ItemGroup>
+      <AdditionalFiles Include="Pages\DelivererPages\Index.cshtml" />
+      <AdditionalFiles Include="Pages\DelivererPages\Login.cshtml" />
+    </ItemGroup>
+
 </Project>

@@ -1,0 +1,28 @@
+@page "/Deliverer/{id}"
+@model DelivererPageModel
+
+@{
+    ViewData["Title"] = "Deliverer Page";
+}
+
+<div class="container">
+    <h1>@ViewData["Title"]</h1>
+
+    <p>Deliverer ID: @Model.Deliverer.Id</p>
+    <p>Name: @Model.Deliverer.Name</p>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Notifications</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var notification in Model.Notifications)
+        {
+            <tr>
+                <td>@notification</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

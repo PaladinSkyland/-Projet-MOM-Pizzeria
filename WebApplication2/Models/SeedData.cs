@@ -1,7 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Linq;
 using WebApplication2.DB;
 
 namespace WebApplication2.Models
@@ -10,43 +7,38 @@ namespace WebApplication2.Models
     {
         public static void Initialize(IServiceProvider serviceProvider)
         {
-            using (var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
+            using var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>());
+            if (!context.Drinks.Any())
             {
-                if (context.Drinks.Any())
-                {
-                    context.Drinks.AddRange(
-                        new Drink
-                        {
-                            Name = "Coca",
-                            Price = 2.5,
-                            Volume = "33cl"
-                        },
-                        new Drink
-                        {
-                            Name = "Fanta",
-                            Price = 2.5,
-                            Volume = "33cl"
-                        },
-                        new Drink
-                        {
-                            Name = "Sprite",
-                            Price = 2.5,
-                            Volume = "33cl"
-                        },
-                        new Drink
-                        {
-                            Name = "Ice Tea",
-                            Price = 2.5,
-                            Volume = "33cl"
-                        }
-                    );
-                }
-                // Look for any movies.
-                if (context.Customers.Any())
-                {
-                    return;   // DB has been seeded
-                }
-
+                context.Drinks.AddRange(
+                    new Drink
+                    {
+                        Name = "Coca",
+                        Price = 2.5,
+                        Volume = .33
+                    },
+                    new Drink
+                    {
+                        Name = "Fanta",
+                        Price = 2.5,
+                        Volume = .33
+                    },
+                    new Drink
+                    {
+                        Name = "Sprite",
+                        Price = 2.5,
+                        Volume = .33
+                    },
+                    new Drink
+                    {
+                        Name = "Ice Tea",
+                        Price = 2.5,
+                        Volume = .33
+                    }
+                );
+            }
+            if (!context.Customers.Any())
+            {
                 context.Customers.AddRange(
                     new Customer
                     {
@@ -63,7 +55,7 @@ namespace WebApplication2.Models
                         Address = "client 2 home",
                         PhoneNumber = "client 2 phone"
                     },
-                    
+
                     new Customer
                     {
                         Name = "Client 3",
@@ -80,8 +72,8 @@ namespace WebApplication2.Models
                         PhoneNumber = "client 4 phone"
                     }
                 );
-                context.SaveChanges();
             }
+            context.SaveChanges();
         }
     }
 }

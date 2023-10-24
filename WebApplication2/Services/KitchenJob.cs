@@ -1,34 +1,20 @@
-using System.Text;
-using RabbitMQ.Client;
+using WebApplication2.Models;
 
 namespace WebApplication2.Services;
 
 public class KitchenJob
 {
+    private Order Order { get; set; }
+    public KitchenJob(Order order)
+    {
+        Order = order;
+    }
     public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         await Task.Run(() =>
         {
-            var factory = new ConnectionFactory { HostName = "localhost" };
-            
-            using var connection = factory.CreateConnection();
-            using var channel = connection.CreateModel();
-
-            channel.ExchangeDeclare(exchange: "clients_queue", type: ExchangeType.Direct);
-
-            const string routingKey = "client1";
-            const string message = "Hello World!";
-            
-            channel.QueueDeclare(queue: routingKey,
-                durable: false,
-                exclusive: false,
-                autoDelete: false,
-                arguments: null);
-            
-            channel.BasicPublish(exchange: "clients_queue",
-                routingKey: routingKey,
-                basicProperties: null,
-                body: Encoding.UTF8.GetBytes(message));
+            RabbitClient.SendNotification("kitchen_exchange", "kitchen", $"New order: {Order.Id}");
+            RabbitClient.SendNotification("customers_exchange", $"customer{Order.Customer.Id}", $"Your order n° ${Order.Id} is in preparation");
         }, cancellationToken);
     }
 }

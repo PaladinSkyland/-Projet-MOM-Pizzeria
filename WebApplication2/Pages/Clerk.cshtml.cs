@@ -1,4 +1,3 @@
-using System.Xml;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -20,8 +19,13 @@ namespace WebApplication2.Pages
         }
         
         // Modèle pour un nouveau client
-        [BindProperty] 
-        public Customer NewCustomer { get; set; } = new();
+        [BindProperty] public Customer NewCustomer { get; set; } = new()
+        {
+            PhoneNumber = "",
+            Name = "",
+            Email = "",
+            Address = ""
+        };
 
         // Liste de clients depuis la base de données (simulée ici)
         public IList<Customer> Customers { get; set; } = new List<Customer>();
@@ -29,7 +33,12 @@ namespace WebApplication2.Pages
         // Statistiques
         public int TotalOrders { get; set; }
         public decimal TotalRevenue { get; set; }
-        public Customer EditedCustomer { get; set; } = new();
+        public Customer EditedCustomer { get; set; } = new(){
+            PhoneNumber = "",
+            Name = "",
+            Email = "",
+            Address = ""
+        };
         public int? EditingCustomerId { get; set; }
     
         
@@ -53,9 +62,15 @@ namespace WebApplication2.Pages
                 // Ajouter le nouveau client à la base de données
                 _context.Customers.Add(NewCustomer);
                 await _context.SaveChangesAsync();
-
+                
                 // Effacer les champs après avoir ajouté le client
-                NewCustomer = new Customer();
+                NewCustomer = new Customer
+                {
+                    PhoneNumber = "",
+                    Name = "",
+                    Email = "",
+                    Address = ""
+                };
 
                 // Mettre à jour la liste des clients
                 Customers = await _context.Customers.ToListAsync();
@@ -119,7 +134,12 @@ namespace WebApplication2.Pages
             }
 
             // Réinitialiser les valeurs d'édition
-            EditedCustomer = new Customer();
+            EditedCustomer = new Customer(){
+                PhoneNumber = "",
+                Name = "",
+                Email = "",
+                Address = ""
+            };
 
             // Mettre à jour la liste des clients
             Customers = await _context.Customers.ToListAsync();
@@ -128,9 +148,6 @@ namespace WebApplication2.Pages
         }
 
 
-
-
-        
     }
 
 }
