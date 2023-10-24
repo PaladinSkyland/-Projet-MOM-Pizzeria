@@ -52,8 +52,43 @@
                             <button type="submit" class="btn btn-danger">Supprimer</button>
                         </form>
                     </td>
+                    <td>
+                        <form method="post" asp-page-handler="Edit" asp-route-customerId="@customer.Id">
+                            <input type="hidden" asp-for="EditingCustomerId" value="@customer.Id" />
+                            <button type="submit" class="btn btn-primary">Modifier</button>
+                        </form>
+                    </td>
                 </tr>
+            
+                @if (Model.EditingCustomerId == customer.Id)
+                {
+                    <tr>
+                        <td>
+                            <form method="post" asp-page-handler="Save">
+                                <tr>
+                                    <td>
+                                        <input type="text" class="form-control" asp-for="EditedCustomer.Name" name="EditedCustomerName" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" asp-for="EditedCustomer.Address" name="EditedCustomerAddress" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" asp-for="EditedCustomer.PhoneNumber" name="EditedCustomerPhoneNumber" />
+                                    </td>
+                                    <td>
+                                        <input type="hidden" name="EditingCustomerId" value="@Model.EditingCustomerId" />
+                                        <button type="submit" class="btn btn-success">Enregistrer</button>
+                                    </td>
+                                </tr>
+                            </form>
+
+                        </td>
+
+                    </tr>
+                }
             }
+
+
 
 
             </tbody>
