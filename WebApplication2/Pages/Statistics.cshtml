@@ -1,0 +1,60 @@
+@page
+@model WebApplication2.Pages.Stat
+@{
+    ViewData["Title"] = "Statistics";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            font-size: 36px;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        button {
+            background-color: #ff6f61;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin: 10px;
+            cursor: pointer;
+        }
+        #results {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Statistics</h1>
+    </header>
+
+  
+        <div>
+            <p>Total des commandes : @Model.TotalOrders</p>
+            <p>Chiffre d'affaires : @Model.TotalRevenue</p>
+            <!-- Autres statistiques -->
+        </div>
+
+    <script>
+        
+    </script>
+</body>
+</html>

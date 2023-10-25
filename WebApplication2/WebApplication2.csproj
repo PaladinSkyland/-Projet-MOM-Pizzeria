@@ -31,4 +31,10 @@
       <AdditionalFiles Include="Pages\DelivererPages\Login.cshtml" />
     </ItemGroup>
 
+
+
+    <ItemGroup>
+      <Folder Include="wwwroot\music\" />
+    </ItemGroup>
+
 </Project>
