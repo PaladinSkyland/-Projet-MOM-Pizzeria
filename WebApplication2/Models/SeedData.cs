@@ -73,6 +73,23 @@ namespace WebApplication2.Models
                     }
                 );
             }
+
+            if (!context.Clerks.Any())
+            {
+                context.Clerks.AddRange(
+                    new Clerk
+                    {
+                        Name = "Clerk 1",
+                        Email = "clerk1@mail.com",
+                        NumberOrders = 0,
+                        Address = "Ta ville",
+                        JobTitle = "Clerk",
+                        Gender = "Non binaire",
+                        HireDate = "Aujourd'hui",
+                        Salary = 0
+                    });
+            }
+
             context.SaveChanges();
         }
     }
