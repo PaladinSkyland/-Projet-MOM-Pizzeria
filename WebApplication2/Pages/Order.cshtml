@@ -1,0 +1,62 @@
+@page
+@model CaissierModel
+
+
+<div class="form-group">
+    <label for="productSelection">Sélectionnez un produit</label>
+    <select class="form-control" id="productSelection">
+        @foreach (var product in Model.Products)
+        {
+            <option value="@product.Id" data-price="@product.Price" data-name="@product.Name">@product.Name - @product.Price €</option>
+        }
+    </select>
+    <input type="number" min="0" class="form-control" id="productQuantity"/>
+    <button id="addToCart" class="btn btn-primary">Ajouter au panier</button>
+</div>
+
+<form method="post" id="orderForm" asp-page-handler="Commit">
+    <input type="hidden" name="IdClerk" value="@Model.IdClerk"/>
+    <input type="hidden" name="IdCustomer" value="@Model.IdCustomer"/>
+    <table id="selectedProducts" class="table">
+        <thead>
+        <tr>
+            <th>Nom du produit</th>
+            <th>Prix</th>
+            <th>Quantité</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody id="orderTableBody">
+        <!-- Les produits sélectionnés seront ajoutés ici -->
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">Terminer la commande</button>
+</form>
+<script type="text/javascript">  
+    let nbProducts = 0;
+    document.getElementById('addToCart').addEventListener('click', function() {
+        let productSelection = document.getElementById('productSelection');
+        let product = productSelection.options[productSelection.selectedIndex];
+        let quantity = document.getElementById('productQuantity').value;
+        
+        let orderTableBody = document.getElementById('orderTableBody');
+        let newRow = orderTableBody.insertRow();
+        let nameCell = newRow.insertCell(0);
+        let priceCell = newRow.insertCell(1);
+        let quantityCell = newRow.insertCell(2);
+        let actionCell = newRow.insertCell(3);
+        let inputIdCell = newRow.insertCell(4);
+        let inputQuantityCell = newRow.insertCell(4);
+        nameCell.innerHTML = product.dataset.name;
+        priceCell.innerHTML = product.dataset.price;
+        quantityCell.innerHTML = quantity
+        inputIdCell.innerHTML = "<input type='hidden' name='productsIds[" + nbProducts + "]' class='form-control' value='" + product.value + "'/>";
+        inputQuantityCell.innerHTML = "<input type='hidden' name='productsQuantities[" + nbProducts + "]' class='form-control' value='" + quantity + "'/>";
+        actionCell.innerHTML = '<button class="btn btn-danger" onclick="removeOrderItem(this)">Supprimer</button>';
+        nbProducts++;
+    });
+
+    function removeOrderItem(button) {
+        button.parentElement.parentElement.remove();
+    }
+</script>

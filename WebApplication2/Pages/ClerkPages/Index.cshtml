@@ -1,5 +1,5 @@
-@page
-@model WebApplication2.Pages.Clerk
+@page "clerk/{id}"
+@model WebApplication2.Pages.Index
 
 @{
     Layout = "_Layout";
@@ -47,6 +47,9 @@
                     <td>@customer.Name</td>
                     <td>@customer.Address</td>
                     <td>@customer.PhoneNumber</td>
+                            <td>
+                                <a asp-page="/Order" asp-route-clerkid="@Model.ClerkId" asp-route-customerid="@customer.Id" class="btn btn-primary">Passer une commande</a>
+                            </td>
                     <td>
                         <form method="post" asp-page-handler="Delete" asp-route-customerId="@customer.Id">
                             <button type="submit" class="btn btn-danger">Supprimer</button>

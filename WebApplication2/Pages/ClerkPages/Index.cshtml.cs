@@ -7,12 +7,12 @@ using WebApplication2.Services;
 
 namespace WebApplication2.Pages
 {
-    public class Clerk : PageModel
+    public class Index : PageModel
     {
         private readonly ApplicationDbContext _context;
         private readonly JobQueue<KitchenJob> _queue;
 
-        public Clerk(ApplicationDbContext context, JobQueue<KitchenJob> queue)
+        public Index(ApplicationDbContext context, JobQueue<KitchenJob> queue)
         {
             _context = context;
             _queue = queue;
@@ -26,6 +26,7 @@ namespace WebApplication2.Pages
             Email = "",
             Address = ""
         };
+        public int ClerkId { get; set; }
 
         // Liste de clients depuis la base de données (simulée ici)
         public IList<Customer> Customers { get; set; } = new List<Customer>();
@@ -42,11 +43,13 @@ namespace WebApplication2.Pages
         public int? EditingCustomerId { get; set; }
     
         
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(int id)
         {
+            ClerkId = id;
             Customers = await _context.Customers.ToListAsync();
             TotalOrders = 10; // Exemple simulé
             TotalRevenue = 500.50m; // Exemple simulé
+            
         }
         /*
         public IActionResult OnPost()
