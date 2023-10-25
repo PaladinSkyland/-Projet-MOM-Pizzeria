@@ -2,61 +2,76 @@
 @model CaissierModel
 
 
-<div class="form-group">
-    <label for="productSelection">Sélectionnez un produit</label>
-    <select class="form-control" id="productSelection">
+<form class="form-group" onsubmit="addOrderItem(); return false;">
+    <label for="productSelection">Select a product</label>
+    <select class="form-control" id="productSelection" required>
         @foreach (var product in Model.Products)
         {
             <option value="@product.Id" data-price="@product.Price" data-name="@product.Name">@product.Name - @product.Price €</option>
         }
     </select>
-    <input type="number" min="0" class="form-control" id="productQuantity"/>
-    <button id="addToCart" class="btn btn-primary">Ajouter au panier</button>
-</div>
+    <label for="productQuantity">Select a quantity</label>
+    <input type="number" min="1" class="form-control" id="productQuantity" required/>
+    <button id="addToCart" type="submit" class="btn btn-primary">Add to cart</button>
+</form>
 
-<form method="post" id="orderForm" asp-page-handler="Commit">
+<form method="post" asp-page-handler="Commit">
     <input type="hidden" name="IdClerk" value="@Model.IdClerk"/>
     <input type="hidden" name="IdCustomer" value="@Model.IdCustomer"/>
-    <table id="selectedProducts" class="table">
+    <table class="table">
         <thead>
         <tr>
-            <th>Nom du produit</th>
-            <th>Prix</th>
-            <th>Quantité</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Quantity</th>
             <th>Action</th>
         </tr>
         </thead>
         <tbody id="orderTableBody">
-        <!-- Les produits sélectionnés seront ajoutés ici -->
         </tbody>
     </table>
-    <button type="submit" class="btn btn-primary">Terminer la commande</button>
+    <button type="submit" class="btn btn-primary">Validate order</button>
 </form>
-<script type="text/javascript">  
+<script type="text/javascript">
     let nbProducts = 0;
-    document.getElementById('addToCart').addEventListener('click', function() {
+
+    function addOrderItem() {
         let productSelection = document.getElementById('productSelection');
         let product = productSelection.options[productSelection.selectedIndex];
         let quantity = document.getElementById('productQuantity').value;
         
         let orderTableBody = document.getElementById('orderTableBody');
+        for (const row of orderTableBody.rows) {
+            if (row.querySelector(".idInput").value === product.value) {
+                let quantityInput = row.querySelector(".quantityInput");
+                quantityInput.value = +quantityInput.value + +quantity;
+                let quantityCell = row.querySelector(".quantityCell");
+                quantityCell.innerHTML = +quantityCell.innerHTML + +quantity;
+                return;
+            }
+        }
         let newRow = orderTableBody.insertRow();
         let nameCell = newRow.insertCell(0);
-        let priceCell = newRow.insertCell(1);
-        let quantityCell = newRow.insertCell(2);
-        let actionCell = newRow.insertCell(3);
-        let inputIdCell = newRow.insertCell(4);
-        let inputQuantityCell = newRow.insertCell(4);
         nameCell.innerHTML = product.dataset.name;
+        let priceCell = newRow.insertCell(1);
         priceCell.innerHTML = product.dataset.price;
-        quantityCell.innerHTML = quantity
-        inputIdCell.innerHTML = "<input type='hidden' name='productsIds[" + nbProducts + "]' class='form-control' value='" + product.value + "'/>";
-        inputQuantityCell.innerHTML = "<input type='hidden' name='productsQuantities[" + nbProducts + "]' class='form-control' value='" + quantity + "'/>";
-        actionCell.innerHTML = '<button class="btn btn-danger" onclick="removeOrderItem(this)">Supprimer</button>';
+        let quantityCell = newRow.insertCell(2);
+        quantityCell.classList.add("quantityCell")
+        quantityCell.innerHTML = quantity;
+        let actionCell = newRow.insertCell(3);
+        actionCell.innerHTML = '<button class="btn btn-danger" onclick="removeOrderItem(this)">Delete</button>';
+        let inputIdCell = newRow.insertCell(4);
+        inputIdCell.style.display = 'none';
+        inputIdCell.innerHTML = "<input type='hidden' name='productsIds[" + nbProducts + "]' class='form-control idInput' value='" + product.value + "'/>";
+        let inputQuantityCell = newRow.insertCell(5);
+        inputQuantityCell.style.display = 'none';
+        inputQuantityCell.innerHTML = "<input type='hidden' name='productsQuantities[" + nbProducts + "]' class='form-control quantityInput' value='" + quantity + "'/>";
+        
         nbProducts++;
-    });
+    }
 
     function removeOrderItem(button) {
         button.parentElement.parentElement.remove();
+        nbProducts--;
     }
 </script>

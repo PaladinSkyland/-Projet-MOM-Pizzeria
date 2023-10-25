@@ -9,11 +9,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 
 builder.Services.AddSingleton<JobQueue<KitchenJob>>();
+builder.Services.AddSingleton<JobQueue<DelivererJob>>();
 builder.Services.AddHostedService<KitchenService>();
+builder.Services.AddHostedService<DeliverersService>();
 
 //add services to the container
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite($"Data Source=DB/database.db"));
+    options.UseSqlite($"Data Source=DB/database.db"),
+    contextLifetime: ServiceLifetime.Scoped, 
+    optionsLifetime: ServiceLifetime.Singleton);
 
 builder.Services.AddSession(options =>
 {

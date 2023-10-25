@@ -17,7 +17,10 @@ public static class RabbitClient
             exclusive: false,
             autoDelete: false,
             arguments: null);
-            
+        channel.QueueBind(queue: queue,
+            exchange: exchange,
+            routingKey: queue);
+
         channel.BasicPublish(exchange: exchange,
             routingKey: queue,
             basicProperties: null,

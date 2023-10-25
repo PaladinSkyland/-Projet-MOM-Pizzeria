@@ -6,6 +6,7 @@ public class JobQueue<T>
 {
     private readonly ConcurrentQueue<T> _jobs = new();
     private readonly SemaphoreSlim _signal = new(0);
+    public int Count => _jobs.Count;
 
     public void Enqueue(T job)
     {
