@@ -3,20 +3,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using WebApplication2.DB;
 using WebApplication2.Models;
-using WebApplication2.Services;
 
-namespace WebApplication2.Pages
+namespace WebApplication2.Pages.ClerkPages
 {
-    public class Index : PageModel
+    public class ClerkPageModel : PageModel
     {
         private readonly ApplicationDbContext _context;
-        private readonly JobQueue<KitchenJob> _queue;
         
 
-        public Index(ApplicationDbContext context, JobQueue<KitchenJob> queue)
+        public ClerkPageModel(ApplicationDbContext context)
         {
             _context = context;
-            _queue = queue;
         }
         
         // Modèle pour un nouveau client

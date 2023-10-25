@@ -2,20 +2,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebApplication2.DB;
 using WebApplication2.Models;
+using WebApplication2.Services;
+
 namespace WebApplication2.Pages;
 
 public class CaissierModel : PageModel
 {
     private readonly ApplicationDbContext _context;
+    private readonly JobQueue<KitchenJob> _queue;
 
     [BindProperty]
     public List<Product> Products { get; set; }
     public int IdCustomer { get; set; }
     public int IdClerk { get; set; }
 
-    public CaissierModel(ApplicationDbContext context)
+    public CaissierModel(ApplicationDbContext context, JobQueue<KitchenJob> queue)
     {
         _context = context;
+        _queue = queue;
     }
 
     public void OnGet()
@@ -78,6 +82,9 @@ public class CaissierModel : PageModel
             //save order
             _context.Orders.Add(newOrder);
             _context.SaveChanges();
+            
+            // add order to kitchen queue
+            _queue.Enqueue(new KitchenJob(newOrder.Id));
             
             Console.WriteLine(productsIds.Count == productsQuantities.Count);
             Console.WriteLine(productsIds.Count);

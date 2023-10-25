@@ -2,22 +2,24 @@ namespace WebApplication2.Services;
 
 public class KitchenService : BackgroundService
 {
-    private readonly JobQueue<KitchenJob> _queue;
+    private readonly JobQueue<KitchenJob> _kitchenQueue;
+    private readonly JobQueue<DelivererJob> _deliverersQueue;
+    private readonly IServiceProvider _serviceProvider;
 
-    public KitchenService(JobQueue<KitchenJob> queue)
+    public KitchenService(JobQueue<KitchenJob> kitchenQueue, JobQueue<DelivererJob> deliverersQueue, IServiceProvider serviceProvider)
     {
-        _queue = queue;
+        _kitchenQueue = kitchenQueue;
+        _deliverersQueue = deliverersQueue;
+        _serviceProvider = serviceProvider;
     }
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Console.WriteLine("starting...");
         while (!stoppingToken.IsCancellationRequested)
         {
-            Console.WriteLine("running...");
-            var job = await _queue.DequeueAsync(stoppingToken);
-            job?.ExecuteAsync(stoppingToken);
-            await Task.Delay(5000, stoppingToken);
+            var job = await _kitchenQueue.DequeueAsync(stoppingToken);
+            job?.ExecuteAsync(_deliverersQueue, _serviceProvider, stoppingToken);
+            await Task.Delay(100, stoppingToken);
         }
     }
 

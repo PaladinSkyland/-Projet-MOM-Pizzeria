@@ -8,5 +8,14 @@ public class Order
     public Deliverer? Deliverer { get; set; }
     public required string OrderDate { get; set; }
     public required string OrderStatus { get; set; }
-    public ICollection<OrderRow> OrderRows { get; set; } = new List<OrderRow>();
+    public ICollection<OrderRow> OrdersRows { get; set; } = new List<OrderRow>();
+
+    public double Price
+    {
+        get
+        {
+            return OrdersRows.Sum(orderRow => orderRow.Quantity * orderRow.Product.Price);
+        }
+    }
+
 }

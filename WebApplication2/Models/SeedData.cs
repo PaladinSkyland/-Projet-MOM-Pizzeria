@@ -8,6 +8,7 @@ namespace WebApplication2.Models
         public static void Initialize(IServiceProvider serviceProvider)
         {
             using var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>());
+
             if (!context.Drinks.Any())
             {
                 context.Drinks.AddRange(
@@ -73,23 +74,64 @@ namespace WebApplication2.Models
                     }
                 );
             }
-
             if (!context.Clerks.Any())
             {
-                context.Clerks.AddRange(
+                context.Clerks.Add(
                     new Clerk
                     {
-                        Name = "Clerk 1",
+                        Name = "clerk 1",
                         Email = "clerk1@mail.com",
-                        NumberOrders = 0,
-                        Address = "Ta ville",
+                        Address = "clerk 1 home",
                         JobTitle = "Clerk",
-                        Gender = "Non binaire",
-                        HireDate = "Aujourd'hui",
-                        Salary = 0
-                    });
+                        Gender = "M",
+                        HireDate = "yesterday",
+                        Salary = 1
+                    }
+                );
             }
-
+            if (!context.Deliverers.Any())
+            {
+                context.Deliverers.Add(
+                    new Deliverer
+                    {
+                        Name = "deliverer 1",
+                        Email = "deliverer1@mail.com",
+                        Address = "deliverer 1 home",
+                        JobTitle = "Deliverer",
+                        Gender = "F",
+                        HireDate = "tomorrow",
+                        Salary = 2,
+                        Vehicle = "Car"
+                    }
+                );
+            }
+            context.SaveChanges();
+            
+            if (!context.Orders.Any())
+            {
+                context.Orders.Add(
+                    new Order
+                    {
+                        Customer = context.Customers.First(),
+                        Clerk = context.Clerks.First(),
+                        OrderDate = "today",
+                        OrderStatus = "Opened"
+                    }
+                );
+            }
+            context.SaveChanges();
+            
+            if (!context.OrdersRows.Any())
+            {
+                context.OrdersRows.Add(
+                    new OrderRow
+                    {
+                        Order = context.Orders.First(),
+                        Product = context.Drinks.First(),
+                        Quantity = 2
+                    }
+                );
+            }
             context.SaveChanges();
         }
     }
