@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using WebApplication2.DB;
 using WebApplication2.Models;
 using WebApplication2.Services;
@@ -16,23 +15,26 @@ namespace WebApplication2.Pages.CustomerPages
             _context = context;
         }
 
-        public Customer? Customer { get; set; }
+        public Customer Customer { get; set; } = new()
+        {
+            PhoneNumber = "",
+            Name = "",
+            Email = "",
+            Address = ""
+        };
+
         public IList<string> Notifications { get; set; } = new List<string>();
         
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
-            if (id == null)
+            var customer = await _context.Customers.FindAsync(id);
+
+            if (customer is null)
             {
                 return NotFound();
             }
 
-            Customer = await _context.Customers.FirstOrDefaultAsync(m => m.Id == id);
-
-            if (Customer == null)
-            {
-                return NotFound();
-            }
-            
+            Customer = customer;
             Notifications = RabbitClient.GetNotifications("customers_exchange", $"customer{id}");
 
             return Page();

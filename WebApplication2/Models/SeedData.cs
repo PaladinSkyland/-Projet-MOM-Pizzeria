@@ -9,20 +9,53 @@ namespace WebApplication2.Models
         {
             using var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>());
 
+            if (!context.Pizzas.Any())
+            {
+                context.Pizzas.AddRange(
+                    new Pizza
+                    {
+                        Name = "Mamma Mia",
+                        Price = 10,
+                        Size = "Normal",
+                        Description = "Tomato and cheese sauce"
+                    },
+                    new Pizza
+                    {
+                        Name = "Pepperoni",
+                        Price = 12,
+                        Size = "Normal",
+                        Description = "Tomato sauce, pepperoni and mozzarella"
+                    },
+                    new Pizza
+                    {
+                        Name = "Quattro formaggi",
+                        Price = 14,
+                        Size = "XL",
+                        Description = "Tomato sauce and 4 italian cheese"
+                    },
+                    new Pizza
+                    {
+                        Name = "margherita",
+                        Price = 11,
+                        Size = "Normal",
+                        Description = "Tomato sauce and mozzarella"
+                    }
+                );
+            }
             if (!context.Drinks.Any())
             {
                 context.Drinks.AddRange(
                     new Drink
                     {
                         Name = "Coca",
-                        Price = 2.5,
+                        Price = 3,
                         Volume = .33
                     },
                     new Drink
                     {
-                        Name = "Fanta",
-                        Price = 2.5,
-                        Volume = .33
+                        Name = "Water",
+                        Price = 1.5,
+                        Volume = .5
                     },
                     new Drink
                     {
@@ -84,7 +117,7 @@ namespace WebApplication2.Models
                         Address = "clerk 1 home",
                         JobTitle = "Clerk",
                         Gender = "M",
-                        HireDate = "yesterday",
+                        HireDate = new DateOnly(2023, 10, 23),
                         Salary = 1
                     }
                 );
@@ -99,7 +132,7 @@ namespace WebApplication2.Models
                         Address = "deliverer 1 home",
                         JobTitle = "Deliverer",
                         Gender = "F",
-                        HireDate = "tomorrow",
+                        HireDate = new DateOnly(2023, 10, 25),
                         Salary = 2,
                         Vehicle = "Car"
                     }
@@ -114,7 +147,7 @@ namespace WebApplication2.Models
                     {
                         Customer = context.Customers.First(),
                         Clerk = context.Clerks.First(),
-                        OrderDate = "today",
+                        OrderDate = DateTime.Now,
                         OrderStatus = "Opened"
                     }
                 );

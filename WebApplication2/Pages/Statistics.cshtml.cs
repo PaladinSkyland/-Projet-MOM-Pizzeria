@@ -1,25 +1,22 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using WebApplication2.DB;
 using WebApplication2.Models;
-using WebApplication2.Services;
 
 namespace WebApplication2.Pages
 {
-    public class Stat : PageModel
+    public class StatsPageModel : PageModel
     {
         private readonly ApplicationDbContext _context;
 
-
-        public Stat(ApplicationDbContext context)
+        public StatsPageModel(ApplicationDbContext context)
         {
             _context = context;
 
         }
         
         public double AvgOrders { get; set; }
-        public double AvgAccountsRecivable { get; set; }
+        public double AvgAccountsReceivable { get; set; }
         
         
         public class ClerkOrderCount
@@ -55,7 +52,7 @@ namespace WebApplication2.Pages
 
             var cutqte = _context.Customers.Count();
             
-            AvgAccountsRecivable = totalPrice/cutqte; 
+            AvgAccountsReceivable = totalPrice/cutqte; 
             
             ClerkOrderCounts = _context.Clerks
                 .Select(clerk => new ClerkOrderCount
@@ -77,28 +74,22 @@ namespace WebApplication2.Pages
                 .Include(o=> o.Customer)
                 .Include(o=> o.Clerk)
                 .Include(o=> o.Deliverer)
-                .Where(o => o.OrderDate == "today")
+                .Where(o => o.OrderDate.Date == DateTime.Today)
                 .ToList();
             
             OrderByDateYesterday = _context.Orders
                 .Include(o=> o.Customer)
                 .Include(o=> o.Clerk)
                 .Include(o=> o.Deliverer)
-                .Where(o => o.OrderDate == "yesterday")
+                .Where(o => o.OrderDate.Date == DateTime.Today.AddDays(-1))
                 .ToList();
             
             OrderByDate2plus = _context.Orders
                 .Include(o=> o.Customer)
                 .Include(o=> o.Clerk)
                 .Include(o=> o.Deliverer)
-                .Where(o => o.OrderDate == "+2 days")
+                .Where(o => o.OrderDate.Date == DateTime.Today.AddDays(-2))
                 .ToList();
-
-
-
         }
-        
-        
-        
     }
 }

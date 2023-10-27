@@ -6,91 +6,82 @@ using WebApplication2.Services;
 
 namespace WebApplication2.Pages;
 
-public class CaissierModel : PageModel
+public class OrderPageModel : PageModel
 {
     private readonly ApplicationDbContext _context;
     private readonly JobQueue<KitchenJob> _queue;
 
-    [BindProperty]
-    public List<Product> Products { get; set; }
+    [BindProperty] public List<Product> Products { get; set; } = new();
     public int IdCustomer { get; set; }
     public int IdClerk { get; set; }
 
-    public CaissierModel(ApplicationDbContext context, JobQueue<KitchenJob> queue)
+    public OrderPageModel(ApplicationDbContext context, JobQueue<KitchenJob> queue)
     {
         _context = context;
         _queue = queue;
     }
 
-    public void OnGet()
+    public IActionResult OnGet()
     {
-        // Charger les produits depuis la base de données
+        // Load products from the database
+        if (!Request.Query.ContainsKey("customerid") || !Request.Query.ContainsKey("clerkid"))
+        {
+            return NotFound();
+        }
         Products = _context.Products.ToList();
-        if (Request.Query.ContainsKey("customerid"))
-        {
-            IdCustomer = int.Parse(Request.Query["customerid"]);
-        }
-        if (Request.Query.ContainsKey("clerkid"))
-        {
-            IdClerk = int.Parse(Request.Query["clerkid"]);
-        }
+        IdCustomer = int.Parse(Request.Query["customerid"].ToString());
+        IdClerk = int.Parse(Request.Query["clerkid"].ToString());
+        return Page();
     }
 
-    public IActionResult OnPostCommit(int idClerk,int idCustomer,List<int> productsIds, List<int> productsQuantities)
+    public async Task<IActionResult> OnPostCommitAsync(int idClerk,int idCustomer,List<int> productsIds, List<int> productsQuantities)
     {
-        var customerOrder = _context.Customers.Find(idCustomer);
-        var clerkOrder = _context.Clerks.Find(idClerk);
-        if (productsIds.Count != productsQuantities.Count || productsIds.Count == 0 || customerOrder == null || clerkOrder == null)
+        var customerOrder = await _context.Customers.FindAsync(idCustomer);
+        var clerkOrder = await _context.Clerks.FindAsync(idClerk);
+        if (productsIds.Count != productsQuantities.Count || productsIds.Count == 0 || customerOrder is null || clerkOrder is null)
         {
-            //return error page
-            Console.WriteLine("Error");
-            return Page();
+            return RedirectToPage("/Error");
         }
-        else
+
+        //create new order
+        var newOrder = new Order
         {
-            //create new order
-            Console.WriteLine(customerOrder);
-            Console.WriteLine(customerOrder.Name);
-            var newOrder = new Order
+            Customer = customerOrder,
+            Clerk = clerkOrder,
+            OrderDate = DateTime.Now,
+            OrderStatus = "Opened"
+        };
+            
+        for (var i = 0; i < productsIds.Count; i++)
+        {
+            var product = await _context.Products.FindAsync(productsIds[i]);
+            if (product == null)
             {
-                Customer = customerOrder,
-                Clerk = clerkOrder,
-                OrderDate = "TODAY",
-                OrderStatus = "Opened"
+                //return error page if product is not found
+                return RedirectToPage("/Error");
+            }
+                
+            //create new order row
+            var newOrderRow = new OrderRow
+            {
+                Order = newOrder,
+                Product = product,
+                Quantity = productsQuantities[i]
             };
             
-            for (var i = 0; i < productsIds.Count; i++)
-            {
-                var product = _context.Products.Find(productsIds[i]);
-                if (product == null)
-                {
-                    //return error page
-                    return Page();
-                }
-                
-                //create new order row
-                var newOrderRow = new OrderRow
-                {
-                    Order = newOrder,
-                    Product = product,
-                    Quantity = productsQuantities[i]
-                };
-                //save order row
-                _context.OrdersRows.Add(newOrderRow);
-                Console.WriteLine($"Ordered product n° {productsIds[i]} with quantity {productsQuantities[i]}");
-            }
-            //save order
-            _context.Orders.Add(newOrder);
-            _context.SaveChanges();
-            
-            // add order to kitchen queue
-            _queue.Enqueue(new KitchenJob(newOrder.Id));
-            
-            Console.WriteLine(productsIds.Count == productsQuantities.Count);
-            Console.WriteLine(productsIds.Count);
-            //Return success page
-            return Page();
+            //save order row
+            await _context.OrdersRows.AddAsync(newOrderRow);
         }
+        //save order
+        await _context.Orders.AddAsync(newOrder);
         
+        // Save changes to the database
+        await _context.SaveChangesAsync();
+            
+        // add order to kitchen queue
+        _queue.Enqueue(new KitchenJob(newOrder.Id));
+            
+        //Return success page
+        return Page();
     }
 }

@@ -6,7 +6,7 @@ public class Order
     public required Customer Customer { get; set; }
     public required Clerk Clerk { get; set; }
     public Deliverer? Deliverer { get; set; }
-    public required string OrderDate { get; set; }
+    public required DateTime OrderDate { get; set; }
     public required string OrderStatus { get; set; }
     public ICollection<OrderRow> OrdersRows { get; set; } = new List<OrderRow>();
 

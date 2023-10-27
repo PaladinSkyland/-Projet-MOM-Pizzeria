@@ -1,5 +1,5 @@
 @page
-@model WebApplication2.Pages.Stat
+@model StatsPageModel
 @{
     ViewData["Title"] = "Statistics";
 }
@@ -59,8 +59,8 @@
   
         <div>
             <p>Average order prices : @Model.AvgOrders €</p>
-            <p>Average Accounts Receivable : @Model.AvgAccountsRecivable € </p>
-            <!-- Autres statistiques -->
+            <p>Average Accounts Receivable : @Model.AvgAccountsReceivable € </p>
+            <!-- Other stats -->
         </div>
 <div>
     <h3>Number of orders by Deliverer</h3>
@@ -81,10 +81,6 @@
             </tr>
                 
         }
-
-
-
-
         </tbody>
     </table>
 </div>
@@ -96,22 +92,17 @@
         <tr>
             <th>Clerk Name</th>
             <th>Number of Orders</th>
-                
         </tr>
         </thead>
         <tbody>
-        @foreach (var customer in Model.ClerkOrderCounts)
+        @foreach (var clerk in Model.ClerkOrderCounts)
         {
             <tr>
-                <td>@customer.ClerkName</td>
-                <td>@customer.OrderCount</td>
+                <td>@clerk.ClerkName</td>
+                <td>@clerk.OrderCount</td>
             </tr>
                 
         }
-
-
-
-
         </tbody>
     </table>
 </div>
@@ -126,7 +117,6 @@
             <th>Deliverer Id</th>
             <th>Order Date</th>
             <th>Order Status</th>
-                
         </tr>
         </thead>
         <tbody>
@@ -136,7 +126,7 @@
                 <td>@customer.Id</td>
                 <td>@customer.Customer.Id</td>
                 <td>@customer.Clerk.Id</td>
-                <td>@customer.Deliverer.Id</td>
+                <td>@customer.Deliverer?.Id</td>
                 <td>@customer.OrderDate</td>
                 <td>@customer.OrderStatus</td>
             </tr>
@@ -145,7 +135,6 @@
         </tbody>
     </table>
 </div>
-
 <div>
     <h3>Yesterday Orders</h3>
     <table class="table">
@@ -167,7 +156,7 @@
                 <td>@customer.Id</td>
                 <td>@customer.Customer.Id</td>
                 <td>@customer.Clerk.Id</td>
-                <td>@customer.Deliverer.Id</td>
+                <td>@customer.Deliverer?.Id</td>
                 <td>@customer.OrderDate</td>
                 <td>@customer.OrderStatus</td>
             </tr>
@@ -198,7 +187,7 @@
                 <td>@customer.Id</td>
                 <td>@customer.Customer.Id</td>
                 <td>@customer.Clerk.Id</td>
-                <td>@customer.Deliverer.Id</td>
+                <td>@customer.Deliverer?.Id</td>
                 <td>@customer.OrderDate</td>
                 <td>@customer.OrderStatus</td>
             </tr>
@@ -208,8 +197,7 @@
     </table>
 </div>
 
-<script>
-        
-    </script>
+<script>        
+</script>
 </body>
 </html>

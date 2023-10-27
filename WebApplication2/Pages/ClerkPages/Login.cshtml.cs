@@ -25,19 +25,14 @@ namespace WebApplication2.Pages.ClerkPages
                     .Where(c => c.Email == Email)
                     .FirstOrDefaultAsync();
 
-                if (clerk != null)
+                if (clerk is not null)
                 {
-                    // Stocker l'ID du client dans la session
-                    HttpContext.Session.SetInt32("ClerkId", clerk.Id);
-
-                    // Rediriger l'utilisateur vers la page personnalisée
+                    // Redirect user to its page
                     return RedirectToPage("Index", new { id = clerk.Id });
                 }
             }
-
-            // L'e-mail n'existe pas dans la base de données ou le champ est vide, vous pouvez rediriger l'utilisateur vers une page d'erreur ou de connexion.
-            // Par exemple, remplacez "Error" par la page de votre choix.
-            return RedirectToPage("Error");
+            // If email is invalid, redirect to an error page
+            return RedirectToPage("/Error");
         }
     }
 }

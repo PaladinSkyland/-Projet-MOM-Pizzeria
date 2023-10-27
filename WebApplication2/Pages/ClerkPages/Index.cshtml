@@ -3,41 +3,41 @@
 
 @{
     Layout = "_Layout";
-    ViewData["Title"] = "Page du Clerc";
+    ViewData["Title"] = "Clerk Page";
 }
 
 <div>
-    <h2>Gestion des Clients</h2>
+    <h2>Clients management</h2>
     <div>
-        <form method="post">
+        <form method="post" asp-page-handler="AddCustomer">
             <div class="form-group">
-                <label for="customerName">Nom du Client</label>
-                <input type="text" class="form-control" id="customerName" asp-for="NewCustomer.Name">
+                <label for="customerName">Client name</label>
+                <input type="text" class="form-control" id="customerName" name="NewCustomer.Name">
             </div>
             <div class="form-group">
-                <label for="customerAddress">Adresse</label>
-                <input type="text" class="form-control" id="customerAddress" asp-for="NewCustomer.Address">
+                <label for="customerAddress">Address</label>
+                <input type="text" class="form-control" id="customerAddress" name="NewCustomer.Address">
             </div>
             <div class="form-group">
-                            <label for="customerEmail">Email</label>
-                            <input type="text" class="form-control" id="customerEmail" asp-for="NewCustomer.Email">
-                        </div>
-            <div class="form-group">
-                <label for="customerPhone">Numéro de Téléphone</label>
-                <input type="text" class="form-control" id="customerPhone" asp-for="NewCustomer.PhoneNumber">
+                <label for="customerEmail">Email</label>
+                <input type="text" class="form-control" id="customerEmail" name="NewCustomer.Email">
             </div>
-            <button type="submit" class="btn btn-primary">Ajouter Client</button>
+            <div class="form-group">
+                <label for="customerPhone">Phone number</label>
+                <input type="text" class="form-control" id="customerPhone" name="NewCustomer.PhoneNumber">
+            </div>
+            <button type="submit" class="btn btn-primary">Add client</button>
         </form>
     </div>
 
     <div>
-        <h3>Liste des Clients</h3>
+        <h3>Clients list</h3>
         <table class="table">
             <thead>
             <tr>
-                <th>Nom</th>
-                <th>Adresse</th>
-                <th>Numéro de Téléphone</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Phone number</th>
             </tr>
             </thead>
             <tbody>
@@ -47,68 +47,45 @@
                     <td>@customer.Name</td>
                     <td>@customer.Address</td>
                     <td>@customer.PhoneNumber</td>
-                            <td>
-                                <a asp-page="/Order" asp-route-clerkid="@Model.ClerkId" asp-route-customerid="@customer.Id" class="btn btn-primary">Passer une commande</a>
-                            </td>
                     <td>
-                        <form method="post" asp-page-handler="Delete" asp-route-customerId="@customer.Id">
-                            <button type="submit" class="btn btn-danger">Supprimer</button>
+                        <a asp-page="/Order" asp-route-clerkid="@RouteData.Values["id"]" asp-route-customerid="@customer.Id" class="btn btn-primary">Order</a>
+                    </td>
+                    <td>
+                        <form method="post" asp-page-handler="DeleteCustomer" asp-route-customerId="@customer.Id">
+                            <button type="submit" class="btn btn-danger">Delete</button>
                         </form>
                     </td>
                     <td>
-                        <form method="post" asp-page-handler="Edit" asp-route-customerId="@customer.Id">
+                        <form method="post" asp-page-handler="EditCustomer" asp-route-customerId="@customer.Id">
                             <input type="hidden" asp-for="EditingCustomerId" value="@customer.Id" />
-                            <button type="submit" class="btn btn-primary">Modifier</button>
+                            <button type="submit" class="btn btn-primary">Modify</button>
                         </form>
                     </td>
                 </tr>
             
                 @if (Model.EditingCustomerId == customer.Id)
                 {
-                    <tr>
-                        <td>
-                            <form method="post" asp-page-handler="Save">
-                                <tr>
-                                    <td>
-                                        <input type="text" class="form-control" asp-for="EditedCustomer.Name" name="EditedCustomerName" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" asp-for="EditedCustomer.Address" name="EditedCustomerAddress" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" asp-for="EditedCustomer.PhoneNumber" name="EditedCustomerPhoneNumber" />
-                                    </td>
-                                    <td>
-                                        <input type="hidden" name="EditingCustomerId" value="@Model.EditingCustomerId" />
-                                        <button type="submit" class="btn btn-success">Enregistrer</button>
-                                    </td>
-                                </tr>
-                            </form>
-
-                        </td>
-
-                    </tr>
+                    <form method="post" asp-page-handler="SaveCustomer">
+                        <tr>
+                            <td>
+                                <input type="text" class="form-control" asp-for="@customer.Name" name="EditedCustomer.Name" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" asp-for="@customer.Address" name="EditedCustomer.Address" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" asp-for="@customer.PhoneNumber" name="EditedCustomer.PhoneNumber" />
+                            </td>
+                            <td>
+                                <input type="hidden" value="@customer.Email" name="EditedCustomer.Email" />
+                                <input type="hidden" name="EditingCustomerId" value="@Model.EditingCustomerId" />
+                                <button type="submit" class="btn btn-success">Save</button>
+                            </td>
+                        </tr>
+                    </form>
                 }
             }
-
-
-
-
             </tbody>
         </table>
-    </div>
-</div>
-
-<div>
-    <h2>Gestion des Commandes</h2>
-    <!-- Formulaires pour gérer les commandes -->
-</div>
-
-<div>
-    <h2>Statistiques</h2>
-    <div>
-        <p>Total des commandes : @Model.TotalOrders</p>
-        <p>Chiffre d'affaires : @Model.TotalRevenue</p>
-        <!-- Autres statistiques -->
     </div>
 </div>

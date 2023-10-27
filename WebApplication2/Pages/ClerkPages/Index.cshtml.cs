@@ -16,139 +16,77 @@ namespace WebApplication2.Pages.ClerkPages
             _context = context;
         }
         
-        // Modèle pour un nouveau client
-        [BindProperty] public Customer NewCustomer { get; set; } = new()
-        {
-            PhoneNumber = "",
-            Name = "",
-            Email = "",
-            Address = ""
-        };
-        public int ClerkId { get; set; }
-
-        // Liste de clients depuis la base de données (simulée ici)
+        [BindProperty]
+        // Clients list from the database
         public IList<Customer> Customers { get; set; } = new List<Customer>();
 
-        // Statistiques
-        public int TotalOrders { get; set; }
-        public decimal TotalRevenue { get; set; }
-        public Customer EditedCustomer { get; set; } = new(){
-            PhoneNumber = "",
-            Name = "",
-            Email = "",
-            Address = ""
-        };
         public int? EditingCustomerId { get; set; }
     
         
-        public async Task OnGetAsync(int id)
+        public async Task OnGetAsync()
         {
-            ClerkId = id;
             Customers = await _context.Customers.ToListAsync();
-            TotalOrders = 10; // Exemple simulé
-            TotalRevenue = 500.50m; // Exemple simulé
-            
         }
-        /*
-        public IActionResult OnPost()
-        {
-            _queue.Enqueue(new KitchenJob());
-            return RedirectToPage();
-        }
-        */
-        public async Task<IActionResult> OnPostAsync()
+
+        public async Task<IActionResult> OnPostAddCustomerAsync(Customer newCustomer)
         {
             if (ModelState.IsValid)
             {
-                // Ajouter le nouveau client à la base de données
-                _context.Customers.Add(NewCustomer);
+                // Add the new client to the database
+                _context.Customers.Add(newCustomer);
                 await _context.SaveChangesAsync();
-                
-                // Effacer les champs après avoir ajouté le client
-                NewCustomer = new Customer
-                {
-                    PhoneNumber = "",
-                    Name = "",
-                    Email = "",
-                    Address = ""
-                };
-
-                // Mettre à jour la liste des clients
-                Customers = await _context.Customers.ToListAsync();
             }
-
+            
             return RedirectToPage();
         }
         
-        public async Task<IActionResult> OnPostDeleteAsync(int? customerId)
+        public async Task<IActionResult> OnPostDeleteCustomerAsync(int? customerId)
         {
-            if (customerId != null)
+            if (customerId is not null)
             {
                 var customer = await _context.Customers.FindAsync(customerId);
-                if (customer != null)
+                if (customer is not null)
                 {
                     _context.Customers.Remove(customer);
                     await _context.SaveChangesAsync();
                 }
             }
 
-            // Mettre à jour la liste des clients
-            Customers = await _context.Customers.ToListAsync();
-
-            return Page();
+            return RedirectToPage();
         }
         
-        public IActionResult OnPostEdit(int? customerId)
+        public async Task<IActionResult> OnPostEditCustomerAsync(int? customerId)
         {
-            if (customerId != null)
+            if (customerId is not null)
             {
                 EditingCustomerId = customerId;
-                EditedCustomer = _context.Customers.Find(customerId);
+                var editedCustomer = await _context.Customers.FindAsync(customerId);
+                if (editedCustomer is not null)
+                {
+                    // Reload clients list
+                    Customers = _context.Customers.ToList();
+                    return Page(); 
+                }
             }
-            else
-            {
-                EditingCustomerId = null;
-            }
-    
-            // Mettre à jour la liste des clients
-            Customers = _context.Customers.ToList();
-    
-            return Page();
+            return RedirectToPage();
         }
 
-        public async Task<IActionResult> OnPostSaveAsync(int? EditingCustomerId, string EditedCustomerName, string EditedCustomerAddress, string EditedCustomerPhoneNumber)
+        public async Task<IActionResult> OnPostSaveCustomerAsync(int? editingCustomerId, Customer editedCustomer)
         {
-
-            if (/* ModelState.IsValid && */ EditingCustomerId != null)
+            if (ModelState.IsValid && editingCustomerId is not null)
             {
-                var customerToEdit = await _context.Customers.FindAsync(EditingCustomerId);
-                Console.WriteLine("Customer to edit:"+customerToEdit);
-
-                if (customerToEdit != null)
+                var customerToEdit = await _context.Customers.FindAsync(editingCustomerId);
+                if (customerToEdit is not null)
                 {
-                    customerToEdit.Name = EditedCustomerName;
-                    customerToEdit.Address = EditedCustomerAddress;
-                    customerToEdit.PhoneNumber = EditedCustomerPhoneNumber;
+                    customerToEdit.Name = editedCustomer.Name;
+                    customerToEdit.Address = editedCustomer.Address;
+                    customerToEdit.PhoneNumber = editedCustomer.PhoneNumber;
 
                     await _context.SaveChangesAsync();
                 }
             }
-
-            // Réinitialiser les valeurs d'édition
-            EditedCustomer = new Customer(){
-                PhoneNumber = "",
-                Name = "",
-                Email = "",
-                Address = ""
-            };
-
-            // Mettre à jour la liste des clients
-            Customers = await _context.Customers.ToListAsync();
-
-            return Page();
+            return RedirectToPage();
         }
-
-
     }
 
 }

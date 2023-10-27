@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using WebApplication2.DB;
 using WebApplication2.Models;
 using WebApplication2.Services;
@@ -16,23 +15,30 @@ namespace WebApplication2.Pages.DelivererPages
             _context = context;
         }
 
-        public Deliverer? Deliverer { get; set; }
+        public Deliverer Deliverer { get; set; } = new()
+        {
+            Vehicle = "",
+            Name = "",
+            Email = "",
+            Address = "",
+            JobTitle = "",
+            Gender = "",
+            HireDate = default,
+            Salary = 0
+        };
+
         public IList<string> Notifications { get; set; } = new List<string>();
         
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
-            if (id == null)
+            var deliverer = await _context.Deliverers.FindAsync(id);
+
+            if (deliverer == null)
             {
                 return NotFound();
             }
 
-            Deliverer = await _context.Deliverers.FirstOrDefaultAsync(m => m.Id == id);
-
-            if (Deliverer == null)
-            {
-                return NotFound();
-            }
-
+            Deliverer = deliverer;
             Notifications = RabbitClient.GetNotifications("deliverers_exchange", $"deliverer{id}");
 
             return Page();
