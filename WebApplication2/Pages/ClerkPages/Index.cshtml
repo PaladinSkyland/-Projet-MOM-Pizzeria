@@ -7,6 +7,26 @@
 }
 
 <div>
+    <h1>@ViewData["Title"]</h1>
+
+    <p>Clerk ID: @Model.Clerk.Id</p>
+    <p>Name: @Model.Clerk.Name</p>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Notifications</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var notification in Model.Notifications)
+        {
+            <tr>
+                <td>@notification</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
     <h2>Clients management</h2>
     <div>
         <form method="post" asp-page-handler="AddCustomer">

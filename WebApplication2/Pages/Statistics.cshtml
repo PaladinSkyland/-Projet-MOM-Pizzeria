@@ -1,86 +1,38 @@
 @page
 @model StatsPageModel
 @{
+    Layout = "_Layout";
     ViewData["Title"] = "Statistics";
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Statistics</title>
-    <style>
-    
-        p{
-        font-family: Arial, sans-serif;
-        font-size: 25px;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f7f7f7;
-            margin: 0;
-            padding: 0;
-        }
-       
-        h1 {
-            font-size: 40px;
-            margin: 0;
-            text-align: center;
-        }
-       
-        h3 {
-            background-color: #f0f0f0;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 10px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #333;
-            color: #000000;
-        }
-    </style>
+<header>
+    <h1>Statistics</h1>
+</header>
 
-</head>
-<body>
-    <header>
-        <h1>Statistics</h1>
-    </header>
+<div>
+    <p>Average order prices : @Model.AvgOrders €</p>
+    <p>Average Accounts Receivable : @Model.AvgAccountsReceivable € </p>
+</div>
 
-  
-        <div>
-            <p>Average order prices : @Model.AvgOrders €</p>
-            <p>Average Accounts Receivable : @Model.AvgAccountsReceivable € </p>
-            <!-- Other stats -->
-        </div>
 <div>
     <h3>Number of orders by Deliverer</h3>
     <table class="table">
         <thead>
-        <tr>
-            <th>Deliverer Name</th>
-            <th>Number of Orders</th>
-                
-        </tr>
+            <tr>
+                <th>Deliverer Name</th>
+                <th>Number of Orders</th>
+                <th>Total Revenue of Orders</th>
+            </tr>
         </thead>
         <tbody>
-        @foreach (var customer in Model.DelOrderCounts)
-        {
-            <tr>
-                <td>@customer.DelName</td>
-                <td>@customer.OrderCount</td>
-            </tr>
-                
-        }
+            @foreach (var deliverer in Model.DelivererOrders)
+            {
+                <tr>
+                <td>@deliverer.Name</td>
+                <td>@deliverer.Orders.Count</td>
+                <td>@deliverer.Orders.Sum(order => order.Price)</td>
+                </tr>
+            }
         </tbody>
     </table>
 </div>
@@ -92,20 +44,22 @@
         <tr>
             <th>Clerk Name</th>
             <th>Number of Orders</th>
+            <th>Total Revenue of Orders</th>
         </tr>
         </thead>
         <tbody>
-        @foreach (var clerk in Model.ClerkOrderCounts)
+        @foreach (var clerk in Model.ClerkOrders)
         {
             <tr>
-                <td>@clerk.ClerkName</td>
-                <td>@clerk.OrderCount</td>
+                <td>@clerk.Name</td>
+                <td>@clerk.Orders.Count</td>
+                <td>@clerk.Orders.Sum(order => order.Price)</td>
             </tr>
-                
         }
         </tbody>
     </table>
 </div>
+
 <div>
     <h3>Today Orders</h3>
     <table class="table">
@@ -120,48 +74,46 @@
         </tr>
         </thead>
         <tbody>
-        @foreach (var customer in Model.OrderByDateToday)
+        @foreach (var order in Model.OrdersByDateToday)
         {
             <tr>
-                <td>@customer.Id</td>
-                <td>@customer.Customer.Id</td>
-                <td>@customer.Clerk.Id</td>
-                <td>@customer.Deliverer?.Id</td>
-                <td>@customer.OrderDate</td>
-                <td>@customer.OrderStatus</td>
+                <td>@order.Id</td>
+                <td>@order.Customer.Id</td>
+                <td>@order.Clerk.Id</td>
+                <td>@order.Deliverer?.Id</td>
+                <td>@order.OrderDate</td>
+                <td>@order.OrderStatus</td>
             </tr>
-                
         }
         </tbody>
     </table>
 </div>
+
 <div>
     <h3>Yesterday Orders</h3>
     <table class="table">
         <thead>
-        <tr>
-            <th>Order Id</th>
-            <th>Customer Id</th>
-            <th>Clerk Id</th>
-            <th>Deliverer Id</th>
-            <th>Order Date</th>
-            <th>Order Status</th>
-                
-        </tr>
+            <tr>
+                <th>Order Id</th>
+                <th>Customer Id</th>
+                <th>Clerk Id</th>
+                <th>Deliverer Id</th>
+                <th>Order Date</th>
+                <th>Order Status</th>
+            </tr>
         </thead>
         <tbody>
-        @foreach (var customer in Model.OrderByDateYesterday)
-        {
-            <tr>
-                <td>@customer.Id</td>
-                <td>@customer.Customer.Id</td>
-                <td>@customer.Clerk.Id</td>
-                <td>@customer.Deliverer?.Id</td>
-                <td>@customer.OrderDate</td>
-                <td>@customer.OrderStatus</td>
-            </tr>
-                
-        }
+            @foreach (var order in Model.OrdersByDateYesterday)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                    <td>@order.Customer.Id</td>
+                    <td>@order.Clerk.Id</td>
+                    <td>@order.Deliverer?.Id</td>
+                    <td>@order.OrderDate</td>
+                    <td>@order.OrderStatus</td>
+                </tr>
+            }
         </tbody>
     </table>
 </div>
@@ -170,34 +122,73 @@
     <h3>+2days Orders</h3>
     <table class="table">
         <thead>
-        <tr>
-            <th>Order Id</th>
-            <th>Customer Id</th>
-            <th>Clerk Id</th>
-            <th>Deliverer Id</th>
-            <th>Order Date</th>
-            <th>Order Status</th>
-                
-        </tr>
+            <tr>
+                <th>Order Id</th>
+                <th>Customer Id</th>
+                <th>Clerk Id</th>
+                <th>Deliverer Id</th>
+                <th>Order Date</th>
+                <th>Order Status</th>
+            </tr>
         </thead>
         <tbody>
-        @foreach (var customer in Model.OrderByDate2plus)
-        {
-            <tr>
-                <td>@customer.Id</td>
-                <td>@customer.Customer.Id</td>
-                <td>@customer.Clerk.Id</td>
-                <td>@customer.Deliverer?.Id</td>
-                <td>@customer.OrderDate</td>
-                <td>@customer.OrderStatus</td>
-            </tr>
-                
-        }
+            @foreach (var order in Model.OrdersByDate2Days)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                    <td>@order.Customer.Id</td>
+                    <td>@order.Clerk.Id</td>
+                    <td>@order.Deliverer?.Id</td>
+                    <td>@order.OrderDate</td>
+                    <td>@order.OrderStatus</td>
+                </tr>
+            }
         </tbody>
     </table>
 </div>
 
-<script>        
-</script>
-</body>
-</html>
+@section Styles
+{
+    <style>
+        p{
+            font-family: Arial, sans-serif;
+            font-size: 25px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            font-size: 40px;
+            margin: 0;
+            text-align: center;
+        }
+
+        h3 {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #333;
+            color: #000000;
+        }
+    </style>
+}

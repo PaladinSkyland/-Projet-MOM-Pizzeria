@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using WebApplication2.DB;
 using WebApplication2.Models;
+using WebApplication2.Services;
 
 namespace WebApplication2.Pages.ClerkPages
 {
@@ -22,10 +23,33 @@ namespace WebApplication2.Pages.ClerkPages
 
         public int? EditingCustomerId { get; set; }
     
-        
-        public async Task OnGetAsync()
+        public Clerk Clerk { get; set; } = new()
+        {
+            Name = "",
+            Email = "",
+            Address = "",
+            JobTitle = "",
+            Gender = "",
+            HireDate = default,
+            Salary = 0
+        };
+
+        public IList<string> Notifications { get; set; } = new List<string>();
+
+        public async Task<IActionResult> OnGetAsync(int id)
         {
             Customers = await _context.Customers.ToListAsync();
+            var clerk = await _context.Clerks.FindAsync(id);
+
+            if (clerk is null)
+            {
+                return NotFound();
+            }
+
+            Clerk = clerk;
+            Notifications = RabbitClient.GetNotifications("customers_exchange", $"customer{id}");
+
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAddCustomerAsync(Customer newCustomer)
